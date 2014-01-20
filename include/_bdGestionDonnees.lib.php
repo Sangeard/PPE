@@ -16,8 +16,8 @@
  */
 function connecterServeurBD() {
     $hote = "localhost";
-    $login = "root";
-    $mdp = "petitpato";
+    $login = "GSBfrais";
+    $mdp = "pato";
     return mysql_connect($hote, $login, $mdp);
 }
 
@@ -75,7 +75,7 @@ function filtrerChainePourBD($str) {
  */
 function obtenirDetailVisiteur($idCnx, $unId) {
     $id = filtrerChainePourBD($unId);
-    $requete = "select id, nom, prenom from visiteur where id='" . $unId . "'";
+    $requete = "select idUtilisateur, nom, prenom, idFonction from Utilisateur where idUtilisateur='" . $unId . "'";
     $idJeuRes = mysql_query($requete, $idCnx);  
     $ligne = false;     
     if ( $idJeuRes ) {
@@ -324,7 +324,7 @@ function verifierInfosConnexion($idCnx, $unLogin, $unMdp) {
     $unLogin = filtrerChainePourBD($unLogin);
     $unMdp = filtrerChainePourBD($unMdp);
     // le mot de passe est crypt� dans la base avec la fonction de hachage md5
-    $req = "select id, nom, prenom, login, mdp from Visiteur where login='".$unLogin."' and mdp='" . $unMdp . "'";
+    $req = "select idUtilisateur, nom, prenom, login, mdp from Utilisateur where login='".$unLogin."' and mdp='" . $unMdp . "'";
     $idJeuRes = mysql_query($req, $idCnx);
     $ligne = false;
     if ( $idJeuRes ) {
@@ -350,5 +350,23 @@ function modifierEtatFicheFrais($idCnx, $unMois, $unIdVisiteur, $unEtat) {
                "', dateModif = now() where idVisiteur ='" .
                $unIdVisiteur . "' and mois = '". $unMois . "'";
     mysql_query($requete, $idCnx);
-}             
+}  
+
+/**
+ * Retourner le libellé de la fonction en fonction de l'idfonction passé en paramètre
+ * @param resource $idCnx identifiant de connexion
+ * @param int $idFonction identifiant de la fonction
+ * @return array libellé de la fonction
+ */
+function libelleIdFonction($idCnx, $idFonction) {
+    $req = "select libelle from Fonction where idFonction = '".$idFonction."'";    
+    $idJeuRes  = mysql_query($req, $idCnx);  
+    $ligne = false ;
+    if ( $idJeuRes ) {
+        $ligne = mysql_fetch_assoc($idJeuRes);
+        mysql_free_result($idJeuRes);
+    } 
+    return $ligne ;
+}
+
 ?>
