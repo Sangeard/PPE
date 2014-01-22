@@ -75,7 +75,6 @@
         
       </form>
 <?php      
-
 // demande et affichage des différents éléments (forfaitisés et non forfaitisés)
 // de la fiche de frais demandée, uniquement si pas d'erreur détecté au contrôle
     if ( $etape == "validerConsult" ) {

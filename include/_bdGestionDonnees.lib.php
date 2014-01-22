@@ -369,4 +369,14 @@ function libelleIdFonction($idCnx, $idFonction) {
     return $ligne ;
 }
 
+/**
+ * Retourner la liste des id de tout les visiteurs
+ * @return string texte de la requete select
+ */
+function obtenirReqListVisiteur(){
+    $requete = "select idUtilisateur, nom, prenom from Utilisateur where idFonction = 1";
+    return $requete ;
+}
+
+
 ?>
