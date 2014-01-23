@@ -378,5 +378,85 @@ function obtenirReqListVisiteur(){
     return $requete ;
 }
 
+/**
+ * Modifie les quantit�s d'une ligne d'élément de frais hors forfait d'une fiche de frais. 
+ * Met � jour les éléments de la ligne hors forfait pour une ligne $idLigne dans la table LigneFraisHorsForfait, apr�s avoir filtr� 
+ * (annul� l'effet de certains caract�res consid�r�s comme sp�ciaux par 
+ *  MySql) chaque donn�e   
+ * @param resource $idCnx identifiant de connexion
+ * @param array $desEltsFraisHF tableau des quantit�s des �l�ments hors forfait
+ * avec pour cl�s les identifiants des frais
+ * @return void  
+ */
+function modifierLigneHorsForfait($idCnx, $desEltsFraisHF){
+    foreach ($desEltsFraisHF as $cle => $val) {
+                 switch ($cle){
+             case "libelle" :
+                 $libelleFraisHF = $val;
+                 break;
+             case "montant" :
+                 $montantFraisHF = $val;
+                 break;
+             case "date" :
+                 $dateFraisHF = $val;
+                 break;
+             case "id" :
+                 $idLigneHF = $val;
+                 break;
+         }
+    }
+    $req = "update LigneFraisHorsForfait set date = '".filtrerChainePourBD(convertirDateFrancaisVersAnglais($dateFraisHF)).
+            "', libelle = '".  filtrerChainePourBD($libelleFraisHF)."', montant = ".  filtrerChainePourBD($montantFraisHF)."
+             where id = '".  filtrerChainePourBD($idLigneHF)."'" ; 
+    mysql_query($req, $idCnx)
+    or die("erreur dans la requete".$req);
+}
+/**Modifie le nombre de justificatif pour une fiche de frais
+ * met à jour le nombre de justificatif dans la table FicheFrais
+ * pour un visiteur idVisiteur et un moi idMois
+ * @param resource $idCnx identifiant de connexion
+ * @param string unIdVisiteur id visiteur
+ * @param string unIdMois id mois
+ * @param int nbJustif nombre de justificatif
+ * @return void
+ */
+function modifierNbJustificatif($idCnx, $unIdVisiteur, $unIdMois, $nbJustif){
+    $req = "update FicheFrais set nbJustificatifs = ".$nbJustif.
+            " where idVisiteur = '".$unIdVisiteur."' and mois = '".$unIdMois."'" ;
+    mysql_query($req, $idCnx)
+    or die("erreur dans la requete".$req);
+}
 
+/**Refuser une ligne hors forfait
+ * mise a jour du libelle de la ligne hors forfait
+ * en ajoutant "REFUSE" devant le texte du libelle 
+ * dans la table LigneFraisHorsForfait
+ * @param resource $idCnx identifiant de connexion
+ * @param idLigneHF id de la ligne hors forfait
+ * @param unLibelle libelle de la ligne hors forfait
+ * @return void
+ */
+function refuserLigneHF($idCnx, $idLigneHF, $unLibelle){
+    $req = "update LigneFraisHorsForfait set libelle = '[REFUSER] ".$unLibelle.
+            "' where id = '".$idLigneHF."'" ;
+    mysql_query($req, $idCnx)
+            or die("Erreur dans la requete".$req);
+}
+
+/**Reintegrer une ligne hors forfait
+ * mise a jour du libelle de la ligne hors forfait
+ * en enlevant "REFUSE" devant le texte du libelle 
+ * dans la table LigneFraisHorsForfait
+ * @param resource $idCnx identifiant de connexion
+ * @param idLigneHF id de la ligne hors forfait
+ * @param unLibelle libelle de la ligne hors forfait
+ * @return void
+ */
+function reintegrerLigneHF($idCnx, $idLigneHF, $unLibelle){
+    $unLibelle = substr($unLibelle, 9);
+    $req = "update LigneFraisHorsForfait set libelle = '".$unLibelle.
+            "' where id = '".$idLigneHF."'" ;
+    mysql_query($req, $idCnx)
+            or die("Erreur dans la requete".$req);
+}
 ?>
