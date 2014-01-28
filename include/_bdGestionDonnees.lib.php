@@ -374,9 +374,25 @@ function libelleIdFonction($idCnx, $idFonction) {
  * @return string texte de la requete select
  */
 function obtenirReqListVisiteur(){
-    $requete = "select idUtilisateur, nom, prenom from Utilisateur where idFonction = 1";
+    $requete = "select idUtilisateur, nom, prenom from Utilisateur INNER JOIN Visiteur ON Utilisateur.idUtilisateur = Visiteur.id INNER JOIN FicheFrais ON Visiteur.id = FicheFrais.idVisiteur where idFonction = 1 AND idEtat = 'CL'";
     return $requete ;
 }
+
+/**
+ * Retourne le texte de la requ�te select concernant les mois pour lesquels un 
+ * visiteur a une fiche de frais a l'etat passer en parametre. 
+ * 
+ * La requ�te de s�lection fournie permettra d'obtenir les mois (AAAAMM) pour 
+ * lesquels le visiteur $unIdVisiteur a une fiche de frais et pour l'etat $unIdEtat.
+ * @param string $unIdEtat id etat 
+ * @param string $unIdVisiteur id visiteur  
+ * @return string texte de la requ�te select
+ */                                                 
+function obtenirReqMoisFicheFraisEtat($unIdVisiteur, $unIdEtat) {
+    $req = "select fichefrais.mois as mois from  fichefrais where fichefrais.idvisiteur ='"
+            . $unIdVisiteur . "' and fichefrais.idetat = '".$unIdEtat. "' order by fichefrais.mois desc ";
+    return $req ;
+} 
 
 /**
  * Modifie les quantit�s d'une ligne d'élément de frais hors forfait d'une fiche de frais. 
@@ -421,6 +437,9 @@ function modifierLigneHorsForfait($idCnx, $desEltsFraisHF){
  * @return void
  */
 function modifierNbJustificatif($idCnx, $unIdVisiteur, $unIdMois, $nbJustif){
+    $unIdVisiteur = filtrerChainePourBD($unIdVisiteur);
+    $unIdMois = filtrerChainePourBD($unIdMois);
+    $nbJustif =  filtrerChainePourBD($nbJustif);
     $req = "update FicheFrais set nbJustificatifs = ".$nbJustif.
             " where idVisiteur = '".$unIdVisiteur."' and mois = '".$unIdMois."'" ;
     mysql_query($req, $idCnx)
@@ -437,6 +456,8 @@ function modifierNbJustificatif($idCnx, $unIdVisiteur, $unIdMois, $nbJustif){
  * @return void
  */
 function refuserLigneHF($idCnx, $idLigneHF, $unLibelle){
+    $idLigneHF = filtrerChainePourBD($idLigneHF);
+    $unLibelle = filtrerChainePourBD($unLibelle);
     $req = "update LigneFraisHorsForfait set libelle = '[REFUSER] ".$unLibelle.
             "' where id = '".$idLigneHF."'" ;
     mysql_query($req, $idCnx)
@@ -453,10 +474,44 @@ function refuserLigneHF($idCnx, $idLigneHF, $unLibelle){
  * @return void
  */
 function reintegrerLigneHF($idCnx, $idLigneHF, $unLibelle){
+    $idLigneHF = filtrerChainePourBD($idLigneHF);
+    $unLibelle = filtrerChainePourBD($unLibelle);
     $unLibelle = substr($unLibelle, 9);
     $req = "update LigneFraisHorsForfait set libelle = '".$unLibelle.
             "' where id = '".$idLigneHF."'" ;
     mysql_query($req, $idCnx)
             or die("Erreur dans la requete".$req);
+}
+
+/**Reporter une ligne hors forfait
+ * appel de le procedure stocke reporterLigneFraisHF
+ * vérifie si la fiche de mois suivant existe
+ * si non elle la créer. Ajoute la ligne HF a la fiche du mois suivant
+ * supprimer la ligne HF du mois courant
+ * @param resource $idCnx identifiant de connexion
+ * @param string idLigneHF id de la ligne hors forfait
+ * @return void
+ */
+function reporterLigneHF($idCnx, $idLigneHF){
+    mysql_query("CALL reporterLigneFraisHF(".$idLigneHF.");", $idCnx);
+}
+
+/** cloturer les fiches de frais du mois précédent 
+ * et les passer à l'état 'cl'
+ * @param resource $idCnx identifiant de connexion
+ * @param string $unIdMois
+ * @return void 
+ */
+function cloturerFichesFrais($idCnx, $unIdMois){
+    $req = "SELECT idVisiteur, mois FROM ficheFrais where idEtat = 'CR' and CAST(mois AS unsigned) <  $unIdMois ;" ;
+    $idJeuFicheFrais = mysql_query($req, $idCnx) ;
+    while ($lgFicheFrais = mysql_fetch_array($idJeuFicheFrais)){
+        modifierEtatFicheFrais($idCnx, $lgFicheFrais['mois'], $lgFicheFrais['idVisiteur'], "CL");
+        //vérification si la fiche de frais suivante existe
+        $existeFicheFrais = existeFicheFrais($idCnx, $unIdMois, $lgFicheFrais['idVisiteur']);
+        if (!$existeFicheFrais){
+            ajouterFicheFrais($idCnx, $unIdMois, $lgFicheFrais['idVisiteur']); 
+        }
+    }
 }
 ?>
