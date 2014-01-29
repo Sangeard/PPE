@@ -66,7 +66,7 @@
               <a href="cValiderFicheFrais.php" title="Validation des fiches de frais">Validation fiche de frais</a>
            </li>
            <li class="smenu">
-              <a href="cSuiviPaiement.php" title="Suivi du paiement des fiches de frais">Suivi paiement fiches de frais</a>
+              <a href="cSuiviPaiementFicheFrais.php" title="Suivi du paiement des fiches de frais">Suivi paiement fiches de frais</a>
            </li>
        <?php
          }

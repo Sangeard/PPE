@@ -514,4 +514,30 @@ function cloturerFichesFrais($idCnx, $unIdMois){
         }
     }
 }
+
+/**
+ * Retourne le texte de la requ�te select concernant les �l�ments d'une fiche de frais 
+ * d'un visiteur pour un mois donn�s. 
+ * 
+ * La requ�te de s�lection fournie permettra d'obtenir l'id, le prenom, le nom, le mois
+ * le total des frais forfaitisés, le total des frais hors forfait, le total des frais
+ * et l'etat de la fiche de frais du visiteur 
+ * d'id $idVisiteur pour le mois $mois     
+ * @return string texte de la requ�te select
+ */                                                 
+function obtenirReqEltsFicheFrais() {
+    $requete = "select Utilisateur.idUtilisateur,nom, prenom, FicheFrais.mois,
+        SUM(LigneFraisForfait.quantite * FraisForfait.montant) AS montantForfait,
+        (FicheFrais.montantValide - SUM(LigneFraisForfait.quantite * FraisForfait.montant)) AS montantHorsForfait,
+        FicheFrais.montantValide
+        FROM Utilisateur INNER JOIN Visiteur ON Utilisateur.idUtilisateur = Visiteur.id
+                         INNER JOIN FicheFrais ON Visiteur.id = FicheFrais.idVisiteur
+                         INNER JOIN LigneFraisForfait ON FicheFrais.idVisiteur = LigneFraisForfait.idVisiteur AND FicheFrais.mois = LigneFraisForfait.mois
+                         INNER JOIN FraisForfait ON LigneFraisForfait.idFraisForfait = FraisForfait.id
+        WHERE FicheFrais.idEtat = 'V'
+        GROUP BY nom, prenom, FicheFrais.mois";
+    return $requete;       
+}
+
+
 ?>

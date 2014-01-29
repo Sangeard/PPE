@@ -111,7 +111,7 @@ $repInclude = './include/';
      }      
    
 }elseif ($etape == "validationFicheFrais") {
-    modifierEtatFicheFrais($idConnexion, $moisSaisi, $visiteurSaisi, 'VA');
+    modifierEtatFicheFrais($idConnexion, $moisSaisi, $visiteurSaisi, 'V');
 }
 ?>
 
