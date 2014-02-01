@@ -322,7 +322,7 @@ function modifierEltsForfait($idCnx, $unMois, $unIdVisiteur, $desEltsForfait) {
  */
 function verifierInfosConnexion($idCnx, $unLogin, $unMdp) {
     $unLogin = filtrerChainePourBD($unLogin);
-    $unMdp = filtrerChainePourBD($unMdp);
+    $unMdp = sha1(filtrerChainePourBD($unMdp));
     // le mot de passe est crypt� dans la base avec la fonction de hachage md5
     $req = "select idUtilisateur, nom, prenom, login, mdp from Utilisateur where login='".$unLogin."' and mdp='" . $unMdp . "'";
     $idJeuRes = mysql_query($req, $idCnx);
@@ -527,17 +527,61 @@ function cloturerFichesFrais($idCnx, $unIdMois){
  */                                                 
 function obtenirReqEltsFicheFrais() {
     $requete = "select Utilisateur.idUtilisateur,nom, prenom, FicheFrais.mois,
-        SUM(LigneFraisForfait.quantite * FraisForfait.montant) AS montantForfait,
-        (FicheFrais.montantValide - SUM(LigneFraisForfait.quantite * FraisForfait.montant)) AS montantHorsForfait,
+        SUM(LigneFraisForfait.quantite * Bareme.montant) AS montantForfait,
+        (FicheFrais.montantValide - SUM(LigneFraisForfait.quantite * Bareme.montant)) AS montantHorsForfait,
         FicheFrais.montantValide
         FROM Utilisateur INNER JOIN Visiteur ON Utilisateur.idUtilisateur = Visiteur.id
                          INNER JOIN FicheFrais ON Visiteur.id = FicheFrais.idVisiteur
                          INNER JOIN LigneFraisForfait ON FicheFrais.idVisiteur = LigneFraisForfait.idVisiteur AND FicheFrais.mois = LigneFraisForfait.mois
                          INNER JOIN FraisForfait ON LigneFraisForfait.idFraisForfait = FraisForfait.id
+                         INNER JOIN Bareme ON Bareme.idFraisForfait = FraisForfait.id
         WHERE FicheFrais.idEtat = 'V'
+        AND (Bareme.idTypeVehicule IS NULL OR Bareme.idTypeVehicule = Visiteur.idTypeVehicule)
         GROUP BY nom, prenom, FicheFrais.mois";
     return $requete;       
 }
 
+/** 
+ * Fournit les informations sur le type de vehicule du visiteur. 
+ * @param resource $idCnx identifiant de connexion
+ * @param string $unId id de l'utilisateur
+ * @return array type vehicule du visiteur
+ */
+function obtenirTypeVehiculeVisiteur($idCnx, $id){
+    $req = "SELECT idTypeVehicule
+            FROM Visiteur
+            WHERE Visiteur.id = '".$id."'";
+    $idJeuRes = mysql_query($req, $idCnx);
+    $typeVehicule = false ;
+    if ( $idJeuRes ) {
+        $ligne = mysql_fetch_assoc($idJeuRes);
+        $typeVehicule = $ligne["idTypeVehicule"];
+        mysql_free_result($idJeuRes);
+    }
+    return $typeVehicule ;
+}
 
+/**
+ * Retourner la liste des types de vehicule
+ * @return string texte de la requete select
+ */
+function obtenirReqListTypeVehicule(){
+    $requete = "SELECT libelle, idTypeVehicule 
+            FROM TypeVehicule" ;
+    return $requete ;
+}
+
+/** modifier le type de vehicule pour le visiteur
+ * @param resource $idCnx identifiant de connexion
+ * @param $idVisiteur id visiteur
+ * @param $idTypeVehicule
+ * @return void
+ */
+function modifierTypeVehicule($idCnx, $idVisiteur, $idTypeVehicule){
+    $idVisiteur =  filtrerChainePourBD($idVisiteur);
+    $idTypeVehicule = filtrerChainePourBD($idTypeVehicule);
+    $req = "UPDATE Visiteur SET idTypeVehicule = '".$idTypeVehicule. "' WHERE id = '".$idVisiteur."'";
+    mysql_query($req, $idCnx)
+            or die("erreur dans la requete".$req);
+}
 ?>

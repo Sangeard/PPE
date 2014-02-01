@@ -23,7 +23,8 @@ $repInclude = './include/';
  $tabEltsFraisForfait = lireDonneePost("txtEltsFraisForfait", "");
  $tabEltsHorsForfait = lireDonneePost("txtEltsHorsForfait","");
  $nbJustificatif = lireDonneePost("txtJustificatifs", "");
-  
+ $typeVehicule = lireDonnee("lstTypeVehicule", "");
+ 
  //récupération du mois précédent 
  $mois = sprintf("%04d%02d", date('Y'), date('m'));
  //cloture des fiches de frais
@@ -35,6 +36,9 @@ $repInclude = './include/';
      //le visiteur est choisi
  }elseif($etape=="choixMois"){
      //le mois est choisi
+ }elseif ($etape == "actualiserTypeVehicule") {
+     //modification du type de vehicule
+     modifierTypeVehicule($idConnexion, $visiteurSaisi, $typeVehicule);
  }elseif ($etape=="actualiserFraisForfait") {
      //vérifier si nb entier positif
      $ok = verifierEntiersPositifs($tabEltsFraisForfait);
@@ -133,6 +137,13 @@ $repInclude = './include/';
   ?>
            
   <?php
+  if($etape == "actualiserTypeVehicule"){
+     ?>
+     <p class="info">La modification du type de véhicule à bien été prise en compte</p>
+     <?php      
+  }
+  ?>
+  <?php   
   if($etape == "actualiserLigneHF"){
       if(nbErreurs($tabErreurs)> 0){
           echo toStringErreurs($tabErreurs);
@@ -255,6 +266,40 @@ $repInclude = './include/';
 <?php 
  if($visiteurSaisi != "" && $moisSaisi != ""){
 ?>
+   <!--modification type de vehicule-->
+   <div>
+       <form id="formTypeVehicule" action="" method="post">
+         <input type="hidden" name="etape" value="actualiserTypeVehicule" />
+         <input type="hidden" name="lstVisiteur" value="<?php echo $visiteurSaisi; ?>" />
+         <input type="hidden" name="lstMois" value="<?php echo $moisSaisi; ?>" /> 
+         <label>Type vehicule</label>
+         <select id="lstTypeVehicule" name="lstTypeVehicule" title="modification du type de vehicule" onchange="msgModificationTypeVehicule();">
+             <?php
+             $typeVehicule = obtenirTypeVehiculeVisiteur($idConnexion, $visiteurSaisi);
+             $req = obtenirReqListTypeVehicule();
+             $idJeuTypeVehicule = mysql_query($req, $idConnexion);
+             $lgTypeVehicule = mysql_fetch_assoc($idJeuTypeVehicule);
+             while (is_array($lgTypeVehicule)){
+                 $libelleTypeVehicule = $lgTypeVehicule['libelle'];
+                 $idTypeVehicule = $lgTypeVehicule['idTypeVehicule'];
+             ?>
+             <option value="<?php echo $idTypeVehicule; ?>" <?php if ($typeVehicule == $idTypeVehicule){ ?>selected="selected"<?php } ?>><?php echo $libelleTypeVehicule;?></option> 
+             <?php
+             $lgTypeVehicule = mysql_fetch_assoc($idJeuTypeVehicule);
+             }
+             mysql_free_result($idJeuTypeVehicule);
+             ?>
+         </select>
+         <a id="lkActualiserTypeVehicule" onclick="actualiserTypeVehicule(<?php echo "'".$typeVehicule."'"; ?>)" title="Actualiser le type de vehicule">Actualiser</a>
+         <a id="lkReinitialiserTypeVehicule" onclick="reinitialiserTypeVehicule()" title="Reinitialiser la valeur de départ">Reinitialiser</a>
+
+       </form>
+   </div>
+   <div id="divMsgModifTypeVehicule" class="infosNonActualisees">
+       <p>Attention, les modifications doivent être actualisées pour vraiment être prise en compte</p>
+   </div>
+       
+    
     <!--modification des forfaits-->
     <div class="fondTableau">
     <form id="formValidationFraisForfait" action="" method="post">

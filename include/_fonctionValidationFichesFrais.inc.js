@@ -18,6 +18,11 @@ function getModifEnCours() {
     var modif = false ;
     //si visiteur et mois choisi
     if(document.getElementById("divMsgModifFraisForfait")){
+        //si modification type vehicule
+        if(document.getElementById("divMsgModifTypeVehicule").style.display == "block"){
+            modif=true;
+            return modif;
+        }
         //si modification frais forfait
         if(document.getElementById("divMsgModifFraisForfait").style.display == "block"){
             modif = true;
@@ -68,6 +73,13 @@ function msgModificationNbJusitificatif() {
     document.getElementById("lkReinitialiserNbJustif").style.display = "inline" ;
 }
 
+//message ectualisation du type de vehicule
+function msgModificationTypeVehicule() {
+   document.getElementById("divMsgModifTypeVehicule").style.display = "block" ;  
+   document.getElementById("lkActualiserTypeVehicule").style.display = "inline" ;
+   document.getElementById("lkReinitialiserTypeVehicule").style.display = "inline" ;   
+}
+
 //réinitialiser les éléments des frais forfaitisés
 function reinitialiserFraisForfait() {
     document.getElementById("formValidationFraisForfait").reset();
@@ -89,6 +101,29 @@ function reinitialiserNbJustir() {
     document.getElementById("divMsgNbJustificatif").style.display = "none" ;
     document.getElementById("lkActualisationNbJustif").style.display = "none" ;
     document.getElementById("lkReinitialiserNbJustif").style.display = "none" ;    
+}
+
+//réinitialisation du type de vehicule
+function reinitialiserTypeVehicule(){
+    document.getElementById("formTypeVehicule").reset();
+    document.getElementById("divMsgModifTypeVehicule").style.display = "none" ;
+    document.getElementById("lkActualiserTypeVehicule").style.display = "none" ;
+    document.getElementById("lkReinitialiserTypeVehicule").style.display = "none" ;  
+}
+
+//actualiser type de vehicule
+function actualiserTypeVehicule(idVehicule) {
+    var txtConfirm ;
+  if(idVehicule != document.getElementById("lstTypeVehicule").value){
+    txtConfirm = "Passer le type de vehicule de " + idVehicule;
+    txtConfirm +=" a " +  document.getElementById("lstTypeVehicule").value;
+    if(confirm("Etes vous sur de vouloir effectuer la modification suivante \n\n"+txtConfirm)){
+        document.getElementById("formTypeVehicule").submit();
+    }
+  }else{
+       alert("Aucune mise a jour n'a été faite");
+       reinitialiserTypeVehicule()
+  }
 }
 
 //actualisation des frais forfaitisés

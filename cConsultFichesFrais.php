@@ -4,8 +4,13 @@
  * @package default
  * @todo  RAS
  */
+
+
+
   $repInclude = './include/';
   require($repInclude . "_init.inc.php");
+
+  
 
   // page inaccessible si visiteur non connecté
   if ( ! estVisiteurConnecte() ) {
@@ -163,6 +168,13 @@
   ?>
     </table>
   </div>
+      
+  <!--génération document pdf-->
+  <form id="formGenerationPdf" action="include/exportPdf.php" method="post">
+      <input type="hidden" name="lstVisiteur" value="<?php echo obtenirIdUserConnecte(); ?>"/>
+      <input type="hidden" name="lstMois" value="<?php echo $moisSaisi; ?>"/><br />
+      <a name="generationPDF" onclick="document.getElementById('formGenerationPdf').submit();">Generer PDF</a>     
+  </form>
 <?php
         }
     }

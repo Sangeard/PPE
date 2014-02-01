@@ -1,5 +1,5 @@
 DELIMITER //
-CREATE FUNCTION montantTotal(i_idVisiteur VARCHAR(5), i_idMois  VARCHAR(6)) RETURNS DECIMAL(10,2)
+CREATE FUNCTION montantTotal2(i_idVisiteur VARCHAR(5), i_idMois  VARCHAR(6)) RETURNS DECIMAL(10,2)
 
 BEGIN
 
@@ -7,6 +7,7 @@ BEGIN
  DECLARE v_montantTotal DECIMAL(10,2);
  DECLARE v_montantForfait DECIMAL(10,2);
  DECLARE v_montantHorsForfait DECIMAL(10,2);
+ DECLARE v_montantKm DECIMAL(10,2);
  DECLARE v_idLigneHF VARCHAR(5);
  DECLARE v_libelleLigneHF VARCHAR(100) ;
  DECLARE v_montantLigneHF DECIMAL(10,2);
@@ -21,11 +22,15 @@ BEGIN
 SET v_montantHorsForfait := 0;
 
 -- Calcul total frais forfait --
-SELECT SUM(LigneFraisForfait.quantite * FraisForfait.montant) AS montantForfait INTO v_montantForfait 
+SELECT SUM(LigneFraisForfait.quantite * Bareme.montant) AS montantForfait INTO v_montantForfait 
     FROM LigneFraisForfait INNER JOIN FraisForfait ON LigneFraisForfait.idFraisForfait = FraisForfait.id
-    WHERE idVisiteur = i_idVisiteur
-    AND mois = i_idMois;
-
+                           INNER JOIN FicheFrais ON FicheFrais.idVisiteur = LigneFraisForfait.idVisiteur AND FicheFrais.mois = LigneFraisForfait.mois
+                           INNER JOIN Visiteur ON Visiteur.id = FicheFrais.idVisiteur
+                           INNER JOIN Bareme ON Bareme.idFraisForfait = FraisForfait.id
+    WHERE LigneFraisForfait.idVisiteur = i_idVisiteur
+    AND LigneFraisForfait.mois = i_idMois
+    AND (Bareme.idTypeVehicule IS NULL OR Bareme.idTypeVehicule = Visiteur.idTypeVehicule);
+   
 -- Calcul total hors forfait --
 OPEN c_montantLHF ;
 WHILE (NOT v_curseurvide) DO
