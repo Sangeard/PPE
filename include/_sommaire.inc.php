@@ -12,9 +12,9 @@
     <div id="menuGauche">
      <div id="infosUtil">
     <?php      
-      if (estVisiteurConnecte() ) {
+      if (estUtilisateurConnecte() ) {
           $idUser = obtenirIdUserConnecte() ;
-          $lgUser = obtenirDetailVisiteur($idConnexion, $idUser);
+          $lgUser = obtenirDetailUtilisateur($idConnexion, $idUser);
           $nom = $lgUser['nom'];
           $prenom = $lgUser['prenom']; 
           $fonction = $lgUser['idFonction'];
@@ -40,7 +40,7 @@
 
       </div>  
 <?php      
-  if (estVisiteurConnecte() ) {
+  if (estUtilisateurConnecte() ) {
 ?>
         <ul id="menuList">
            <li class="smenu">

@@ -66,14 +66,14 @@ function filtrerChainePourBD($str) {
 }
 
 /** 
- * Fournit les informations sur un visiteur demand�. 
- * Retourne les informations du visiteur d'id $unId sous la forme d'un tableau
+ * Fournit les informations sur un utilisateur demand�. 
+ * Retourne les informations du utilisateur d'id $unId sous la forme d'un tableau
  * associatif dont les cl�s sont les noms des colonnes(id, nom, prenom).
  * @param resource $idCnx identifiant de connexion
  * @param string $unId id de l'utilisateur
- * @return array  tableau associatif du visiteur
+ * @return array  tableau associatif du utilisateur
  */
-function obtenirDetailVisiteur($idCnx, $unId) {
+function obtenirDetailUtilisateur($idCnx, $unId) {
     $id = filtrerChainePourBD($unId);
     $requete = "select idUtilisateur, nom, prenom, idFonction from Utilisateur where idUtilisateur='" . $unId . "'";
     $idJeuRes = mysql_query($requete, $idCnx);  
@@ -374,7 +374,7 @@ function libelleIdFonction($idCnx, $idFonction) {
  * @return string texte de la requete select
  */
 function obtenirReqListVisiteur(){
-    $requete = "select idUtilisateur, nom, prenom from Utilisateur INNER JOIN Visiteur ON Utilisateur.idUtilisateur = Visiteur.id INNER JOIN FicheFrais ON Visiteur.id = FicheFrais.idVisiteur where idFonction = 1 AND idEtat = 'CL'";
+    $requete = "select distinct idUtilisateur, nom, prenom from Utilisateur INNER JOIN Visiteur ON Utilisateur.idUtilisateur = Visiteur.id INNER JOIN FicheFrais ON Visiteur.id = FicheFrais.idVisiteur where idFonction = 1 AND idEtat = 'CL'";
     return $requete ;
 }
 
@@ -524,7 +524,7 @@ function cloturerFichesFrais($idCnx, $unIdMois){
  * et l'etat de la fiche de frais du visiteur 
  * d'id $idVisiteur pour le mois $mois     
  * @return string texte de la requ�te select
- */                                                 
+ */                                               
 function obtenirReqEltsFicheFrais() {
     $requete = "select Utilisateur.idUtilisateur,nom, prenom, FicheFrais.mois,
         SUM(LigneFraisForfait.quantite * Bareme.montant) AS montantForfait,

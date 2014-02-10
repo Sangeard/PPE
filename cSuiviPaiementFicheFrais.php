@@ -9,8 +9,8 @@
 $repInclude = './include/';
   require($repInclude . "_init.inc.php");
 
-  // page inaccessible si visiteur non connecté
-  if ( ! estVisiteurConnecte() ) {
+  // page inaccessible si utilisateur non connecté
+  if ( ! estUtilisateurConnecte() ) {
       header("Location: cSeConnecter.php");  
   }
   require($repInclude . "_entete.inc.html");
@@ -34,7 +34,7 @@ $repInclude = './include/';
     <h1>Suivi des paiements de fiche de frais</h1>
     <!--Affichage message confirmation-->
     <?php 
-     $lgVisiteur = obtenirDetailVisiteur($idConnexion, $idVisiteur);
+     $lgVisiteur = obtenirDetailUtilisateur($idConnexion, $idVisiteur);
      $nom = $lgVisiteur['nom'];
      $prenom = $lgVisiteur['prenom'];
      if($etape == "miseEnPaiement") {

@@ -12,8 +12,8 @@
 
   
 
-  // page inaccessible si visiteur non connecté
-  if ( ! estVisiteurConnecte() ) {
+  // page inaccessible si utilisateur non connecté
+  if ( ! estUtilisateurConnecte() ) {
       header("Location: cSeConnecter.php");  
   }
   require($repInclude . "_entete.inc.html");

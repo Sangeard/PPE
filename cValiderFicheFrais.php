@@ -9,8 +9,8 @@
 $repInclude = './include/';
   require($repInclude . "_init.inc.php");
 
-  // page inaccessible si visiteur non connecté
-  if ( ! estVisiteurConnecte() ) {
+  // page inaccessible si utilisateur non connecté
+  if ( ! estUtilisateurConnecte() ) {
       header("Location: cSeConnecter.php");  
   }
   require($repInclude . "_entete.inc.html");
@@ -193,7 +193,7 @@ $repInclude = './include/';
            
     <?php
   if($etape == "validationFicheFrais"){
-      $lgFicheFrais = obtenirDetailVisiteur($idConnexion, $visiteurSaisi);
+      $lgFicheFrais = obtenirDetailUtilisateur($idConnexion, $visiteurSaisi);
      ?>
            <p class="info">La fiche de frais de <?php echo $lgFicheFrais['prenom'] ." ". $lgFicheFrais['nom']; ?> pour le mois de <?php echo obtenirLibelleMois(intval(substr($moisSaisi, 4, 2))) . " " . intval(substr($moisSaisi, 0, 4)); ?> à bien été validé et mise en paiement</p>
       <?php 

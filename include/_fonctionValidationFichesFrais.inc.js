@@ -73,7 +73,7 @@ function msgModificationNbJusitificatif() {
     document.getElementById("lkReinitialiserNbJustif").style.display = "inline" ;
 }
 
-//message ectualisation du type de vehicule
+//message actualisation du type de vehicule
 function msgModificationTypeVehicule() {
    document.getElementById("divMsgModifTypeVehicule").style.display = "block" ;  
    document.getElementById("lkActualiserTypeVehicule").style.display = "inline" ;
@@ -169,11 +169,11 @@ function actualiserFraisHF(id, date, libelle, montant){
   }
   if(libelle != document.getElementById("libelleHF"+id).value){
       modif = true ;
-       txtModif += "La description " +libelle+" par " + document.getElementById("libelleHF"+id).value + "\n\n";
+       txtModif = "La description " +libelle+" par " + document.getElementById("libelleHF"+id).value + "\n\n";
  }
   if(montant != document.getElementById("montantHF"+id).value){
       modif = true ;
-      txtModif += "Le montant " +montant+" par " + document.getElementById("montantHF"+id).value + "\n\n";
+      txtModif = "Le montant " +montant+" par " + document.getElementById("montantHF"+id).value + "\n\n";
   }
   if(modif){
       if(confirm("Etes-vous sur de vouloir effectuer les modifications suivantes : \n\n" + txtModif)){

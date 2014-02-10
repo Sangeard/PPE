@@ -42,11 +42,11 @@ function affecterInfosConnecte($id, $login) {
 }
 
 /** 
- * Déconnecte le visiteur qui s'est identifié sur le site.                     
+ * Déconnecte le utilisateur qui s'est identifié sur le site.                     
  *
  * @return void
  */
-function deconnecterVisiteur() {
+function deconnecterUtilisateur() {
     unset($_SESSION["idUser"]);
     unset($_SESSION["loginUser"]);
 }
@@ -54,11 +54,11 @@ function deconnecterVisiteur() {
 /** 
  * Vérifie si un visiteur s'est connecté sur le site.                     
  *
- * Retourne true si un visiteur s'est identifié sur le site, false sinon. 
+ * Retourne true si un utilisateur s'est identifié sur le site, false sinon. 
  * @return boolean échec ou succès
  */
-function estVisiteurConnecte() {
-    // actuellement il n'y a que les visiteurs qui se connectent
+function estUtilisateurConnecte() {
+    // actuellement il n'y a que les utilisateurqui se connectent
     return isset($_SESSION["loginUser"]);
 }
 ?>

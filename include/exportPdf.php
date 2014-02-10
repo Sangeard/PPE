@@ -205,7 +205,7 @@ if(!file_exists($fichier)){
  $pdf->Output($fichier);  
 }
 header('Content-type: application/pdf');
-header('Content-Disposition: attachment; filename="downloaded.pdf"');
+header('Content-Disposition: attachment; filename="'.$idVisiteur.$idMois.'.pdf"');
 header('Cache-Control: private, max-age=0, must-revalidate');
 readfile($fichier);
 ?>
