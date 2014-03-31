@@ -1,8 +1,9 @@
 <?php
-/** 
- * Libère les ressources nécessaires au fonctionnement de l'application
+
+/**
+ * Libï¿½re les ressources nï¿½cessaires au fonctionnement de l'application
  * @package default
  * @todo  RAS
  */
-    deconnecterServeurBD($idConnexion);
+deconnecterServeurBD($idConnexion);
 ?>

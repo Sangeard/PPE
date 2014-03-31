@@ -1,5 +1,6 @@
 <?php
-header("Location: cAccueil.php"); 
+
+header("Location: cAccueil.php");
 ?>
 
 
