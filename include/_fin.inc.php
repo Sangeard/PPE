@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Lib�re les ressources n�cessaires au fonctionnement de l'application
+ * Libère les ressources nécessaires au fonctionnement de l'application
  * @package default
  * @todo  RAS
  */
